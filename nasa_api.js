@@ -6,6 +6,8 @@ var vm = new Vue({
         imgSrc: '',
         imgTitle: '',
         asteroids: [],
+        showSummary: true,
+
     },
     computed: {
         numAsteroids: function(){
@@ -51,6 +53,17 @@ var vm = new Vue({
         },
         remove: function(index){
             this.asteroids.splice(index, 1)
+        },
+        getRowStyle: function(a){
+            if(a.close_approach_data == 0){
+                return {
+                    border: 'solid 3px red',
+                    color: 'red'
+                };
+            }
+        },
+        isMissingData: function(a){
+            return a.close_approach_data == 0;
         }
     }
 });

@@ -9,20 +9,43 @@
         [v-cloak]{
             display: none;
         }
+        .highlight {
+            border: solid 3px red;
+            color: red
+        }
+        .shooting-star-leave-to, .shooting-star-enter {
+            transform: translateX(150px) rotate(30deg);
+            opacity: 0;
+        }
+        .shooting-star-enter-active, .shooting-star-leave-active{
+            transition: all .5s ease;
+        }
+        .neo-list-leave-to, .neo-list-enter  {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .neo-list-enter-active, .neo-list-leave-active{
+            transition: all .1s linear;
+        }
     </style>
     <title>NASA's API</title>
 </head>
 <body>
     <div id="app">
        <div class="container">
-            <img :src="imgSrc" :title="imgTitle" width="500 px" height="500 px">
+            <!-- <img :src="imgSrc" :title="imgTitle" width="500 px" height="500 px"> -->
             <div class="card mt-5">
                 <h2 class="card-header">Near Earth Objects:</h2>
-                <div class="m-3" v-cloak v-if="numAsteroids > 0">
-                    <p>showing {{ numAsteroids }} items</p>
-                    <p>{{ closestObject }} has the shortest miss distance</p>
+                <transition name="shooting-star">
+                    <div class="m-3" v-cloak v-if="numAsteroids > 0 && showSummary">
+                        <p>showing {{ numAsteroids }} items</p>
+                        <p>{{ closestObject }} has the shortest miss distance</p>
+                    </div>
+                </transition>
+                <div class="m-3">
+                    <a href="#" @click="showSummary = !showSummary">Show/Hide Summary</a>
                 </div>
-                <table class="table">
+                <table class="table table-striped">
                     <thead class="thead-light">
                         <th>#</th>
                         <th>Name</th>
@@ -30,8 +53,10 @@
                         <th>Miss Distance</th>
                         <th>Remove</th>
                     </thead>
-                    <tbody v-cloak>
-                        <tr v-for="(a, index) in asteroids" :key="a.neo_reference_id">
+                    <tbody is="transition-group" tag="tbody" name="neo-list" v-cloak>
+
+                        <!-- :style="getRowStyle(a)" style="color:green" -->
+                        <tr v-for="(a, index) in asteroids" :key="a.neo_reference_id" :class="{highlight: isMissingData(a)}">
                             <td>{{ index + 1 }}</td>
                             <td>{{ a.name }}</td>
                             <td>{{ getCloseApproachDate(a) }}</td>
